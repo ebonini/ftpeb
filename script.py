@@ -25,6 +25,10 @@ def get_movie_data(tvg_name):
             return results[0]  # Retorna o primeiro resultado
     return None
 
+# Verificar o diretório de trabalho atual
+current_directory = os.getcwd()
+print(f"Diretório de trabalho atual: {current_directory}")
+
 # Abrir a planilha
 spreadsheet = client.open("BASE")
 worksheet = spreadsheet.sheet1
