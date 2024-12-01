@@ -2,7 +2,6 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
-import requests
 
 # Carregar as credenciais do Google Sheets dos segredos do GitHub Actions
 credentials_json = os.environ["GOOGLE_CREDENTIALS_JSON"]
@@ -12,22 +11,19 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
 client = gspread.authorize(credentials)
 
-# Chave de API da TMDb
-tmdb_api_key = os.environ["TMDB_API_KEY"]
+# Verificar se a autenticação foi bem-sucedida
+try:
+    spreadsheet = client.open("BASE")
+    print("Autenticação bem-sucedida e acesso à planilha garantido.")
+except gspread.exceptions.SpreadsheetNotFound:
+    print("Planilha não encontrada. Verifique o nome e as permissões.")
+    raise
+except Exception as e:
+    print(f"Erro na autenticação ou acesso: {e}")
+    raise
 
-# Função para obter dados do filme da TMDb
-def get_movie_data(tvg_name):
-    url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={tvg_name}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        results = response.json().get("results")
-        if results:
-            return results[0]  # Retorna o primeiro resultado
-    return None
-
-# Abrir a planilha
-spreadsheet = client.open("BASE")
-worksheet = spreadsheet.Lista
+# Pegar a primeira worksheet da planilha
+worksheet = spreadsheet.sheet1
 
 # Pegar todas as linhas da planilha
 rows = worksheet.get_all_records()
@@ -37,14 +33,9 @@ with open("playlist.m3u", "w") as file:
     for row in rows:
         tvg_name = row["tvg-name"]
         
-        movie_data = get_movie_data(tvg_name)
-        if movie_data:
-            logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
-            description = movie_data["overview"] if movie_data["overview"] else ""
-            group_title = row["group-title"]
-            nome_filme = row["Nome_Filme"]
-            
-            m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n'
-            file.write(m3u_line)
+        # Adicione aqui a lógica para obter os dados da TMDb
+        
+        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n'
+        file.write(m3u_line)
 
 print("Lista M3U gerada com sucesso!")
