@@ -30,4 +30,4 @@ jobs:
         GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
-        python generate_m3u.py
+        python script.py
