@@ -37,7 +37,8 @@ worksheet = spreadsheet.sheet1
 rows = worksheet.get_all_records()
 
 # Gerar a lista M3U
-with open("playlist.m3u", "w") as file:
+m3u_file_path = os.path.join(current_directory, "playlist.m3u")
+with open(m3u_file_path, "w") as file:
     for row in rows:
         tvg_name = row["tvg-name"]
         
@@ -59,7 +60,10 @@ with open("playlist.m3u", "w") as file:
 print("Lista M3U gerada com sucesso!")
 
 # Verifique se o arquivo foi criado
-if os.path.exists("playlist.m3u"):
-    print("Arquivo playlist.m3u criado com sucesso.")
+if os.path.exists(m3u_file_path):
+    print(f"Arquivo {m3u_file_path} criado com sucesso.")
+    print("Conteúdo do diretório:")
+    for file_name in os.listdir(current_directory):
+        print(file_name)
 else:
-    print("Falha ao criar o arquivo playlist.m3u.")
+    print(f"Falha ao criar o arquivo {m3u_file_path}.")
