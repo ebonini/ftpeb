@@ -3,7 +3,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
 import requests
-from googletrans import Translator
 
 # Carregar as credenciais do Google Sheets dos segredos do GitHub Actions
 credentials_json = os.environ["GOOGLE_CREDENTIALS_JSON"]
@@ -16,12 +15,9 @@ client = gspread.authorize(credentials)
 # Chave de API da TMDb
 tmdb_api_key = os.environ["TMDB_API_KEY"]
 
-# Inicializar o tradutor
-translator = Translator()
-
 # Função para obter dados do filme da TMDb
 def get_movie_data(tvg_name):
-    url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={tvg_name}"
+    url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={tvg_name}&language=pt-BR"
     response = requests.get(url)
     if response.status_code == 200:
         results = response.json().get("results")
@@ -51,20 +47,14 @@ with open(m3u_file_path, "w") as file:
         if movie_data:
             logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
             description = movie_data["overview"] if movie_data["overview"] else ""
-            
-            # Traduzir a descrição para o português
-            if description:
-                translated_description = translator.translate(description, src='en', dest='pt').text
-            else:
-                translated_description = ""
         else:
             logo = ""
-            translated_description = ""
+            description = ""
 
         group_title = row["group-title"]
         nome_filme = row["Nome_Filme"]
         
-        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{translated_description}" group-title="{group_title}", {tvg_name}\n'
+        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {tvg_name}\n'
         file.write(m3u_line)
         print(f"Escrevendo linha: {m3u_line.strip()}")
 
