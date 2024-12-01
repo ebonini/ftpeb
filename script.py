@@ -38,6 +38,7 @@ rows = worksheet.get_all_records()
 
 # Gerar a lista M3U
 m3u_file_path = os.path.join(current_directory, "playlist.m3u")
+print(f"Salvando o arquivo M3U em: {m3u_file_path}")
 with open(m3u_file_path, "w") as file:
     for row in rows:
         tvg_name = row["tvg-name"]
