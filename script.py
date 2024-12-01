@@ -26,8 +26,8 @@ def get_movie_data(tvg_name):
     return None
 
 # Abrir a planilha
-spreadsheet = client.open("Nome_da_Sua_Planilha")
-worksheet = spreadsheet.sheet1
+spreadsheet = client.open("BASE")
+worksheet = spreadsheet.Lista
 
 # Pegar todas as linhas da planilha
 rows = worksheet.get_all_records()
