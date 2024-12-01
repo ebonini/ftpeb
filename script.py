@@ -15,14 +15,12 @@ client = gspread.authorize(credentials)
 # Chave de API da TMDb
 tmdb_api_key = os.environ["TMDB_API_KEY"]
 
-# Função para obter dados do filme da TMDb
-def get_movie_data(tvg_name):
-    url = f"https://api.themoviedb.org/3/search/movie?api_key={tmdb_api_key}&query={tvg_name}&language=pt-BR"
+# Função para obter dados do filme da TMDb usando o ID
+def get_movie_data(movie_id):
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={tmdb_api_key}&language=pt-BR"
     response = requests.get(url)
     if response.status_code == 200:
-        results = response.json().get("results")
-        if results:
-            return results[0]  # Retorna o primeiro resultado
+        return response.json()  # Retorna os dados do filme
     return None
 
 # Verificar o diretório de trabalho atual
@@ -41,14 +39,16 @@ m3u_file_path = os.path.join(current_directory, "playlist.m3u")
 print(f"Salvando o arquivo M3U em: {m3u_file_path}")
 with open(m3u_file_path, "w") as file:
     for row in rows:
-        tvg_name = row["tvg-name"]
+        movie_id = row["id"]  # Usar o campo id da planilha
         
-        movie_data = get_movie_data(tvg_name)
+        movie_data = get_movie_data(movie_id)
         if movie_data:
+            tvg_name = movie_data["title"]
             logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
             description = movie_data["overview"] if movie_data["overview"] else ""
             release_year = movie_data["release_date"].split("-")[0] if "release_date" in movie_data else "N/A"
         else:
+            tvg_name = "Unknown"
             logo = ""
             description = ""
             release_year = "N/A"
