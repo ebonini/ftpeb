@@ -47,14 +47,16 @@ with open(m3u_file_path, "w") as file:
         if movie_data:
             logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
             description = movie_data["overview"] if movie_data["overview"] else ""
+            release_year = movie_data["release_date"].split("-")[0] if "release_date" in movie_data else "N/A"
         else:
             logo = ""
             description = ""
+            release_year = "N/A"
 
         group_title = row["group-title"]
-        nome_filme = row["Nome_Filme"]
+        nome_filme = f"{tvg_name} ({release_year})"
         
-        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {tvg_name}\n'
+        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{nome_filme}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n'
         file.write(m3u_line)
         print(f"Escrevendo linha: {m3u_line.strip()}")
 
