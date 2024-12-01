@@ -50,5 +50,12 @@ with open("playlist.m3u", "w") as file:
         
         m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{tvg_name}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n'
         file.write(m3u_line)
+        print(f"Escrevendo linha: {m3u_line.strip()}")
 
 print("Lista M3U gerada com sucesso!")
+
+# Verifique se o arquivo foi criado
+if os.path.exists("playlist.m3u"):
+    print("Arquivo playlist.m3u criado com sucesso.")
+else:
+    print("Falha ao criar o arquivo playlist.m3u.")
