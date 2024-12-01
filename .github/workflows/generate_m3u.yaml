@@ -39,6 +39,7 @@ jobs:
       run: |
         git config --global user.email "eduardo@ebonini.com.br"
         git config --global user.name "ebonini"
+        git pull origin main
         git add -f playlist.m3u
         git commit -m "Add generated playlist.m3u"
         git push origin main
