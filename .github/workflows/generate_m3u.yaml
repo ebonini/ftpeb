@@ -33,7 +33,7 @@ jobs:
         python script.py
 
     - name: Upload M3U Playlist
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: playlist-m3u
         path: playlist.m3u
