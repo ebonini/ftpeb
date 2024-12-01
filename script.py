@@ -45,4 +45,28 @@ with open(m3u_file_path, "w") as file:
         
         movie_data = get_movie_data(tvg_name)
         if movie_data:
-            logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2
+            logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
+            description = movie_data["overview"] if movie_data["overview"] else ""
+            release_year = movie_data["release_date"].split("-")[0] if "release_date" in movie_data else "N/A"
+        else:
+            logo = ""
+            description = ""
+            release_year = "N/A"
+
+        group_title = row["group-title"]
+        nome_filme = f"{tvg_name} ({release_year})"
+        
+        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{nome_filme}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n\n'
+        file.write(m3u_line)
+        print(f"Escrevendo linha: {m3u_line.strip()}")
+
+print("Lista M3U gerada com sucesso!")
+
+# Verifique se o arquivo foi criado
+if os.path.exists(m3u_file_path):
+    print(f"Arquivo {m3u_file_path} criado com sucesso.")
+    print("Conteúdo do diretório:")
+    for file_name in os.listdir(current_directory):
+        print(file_name)
+else:
+    print(f"Falha ao criar o arquivo {m3u_file_path}.")
