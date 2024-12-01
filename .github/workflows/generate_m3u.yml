@@ -31,3 +31,9 @@ jobs:
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
         python script.py
+
+    - name: Upload M3U Playlist
+      uses: actions/upload-artifact@v2
+      with:
+        name: playlist-m3u
+        path: playlist.m3u
