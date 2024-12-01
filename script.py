@@ -34,31 +34,40 @@ worksheet = spreadsheet.sheet1
 # Pegar todas as linhas da planilha
 rows = worksheet.get_all_records()
 
+# Listar todas as colunas para depuração
+if rows:
+    print(f"Colunas disponíveis na planilha: {list(rows[0].keys())}")
+else:
+    print("Nenhuma linha encontrada na planilha.")
+
 # Gerar a lista M3U
 m3u_file_path = os.path.join(current_directory, "playlist.m3u")
 print(f"Salvando o arquivo M3U em: {m3u_file_path}")
 with open(m3u_file_path, "w") as file:
     for row in rows:
-        movie_id = row["id"]  # Usar o campo id da planilha
+        movie_id = row.get("ID")  # Usar o campo ID da planilha
         
-        movie_data = get_movie_data(movie_id)
-        if movie_data:
-            tvg_name = movie_data["title"]
-            logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
-            description = movie_data["overview"] if movie_data["overview"] else ""
-            release_year = movie_data["release_date"].split("-")[0] if "release_date" in movie_data else "N/A"
-        else:
-            tvg_name = "Unknown"
-            logo = ""
-            description = ""
-            release_year = "N/A"
+        if movie_id:
+            movie_data = get_movie_data(movie_id)
+            if movie_data:
+                tvg_name = movie_data["title"]
+                logo = f"https://image.tmdb.org/t/p/w600_and_h900_bestv2/{movie_data['poster_path']}" if movie_data['poster_path'] else ""
+                description = movie_data["overview"] if movie_data["overview"] else ""
+                release_year = movie_data["release_date"].split("-")[0] if "release_date" in movie_data else "N/A"
+            else:
+                tvg_name = "Unknown"
+                logo = ""
+                description = ""
+                release_year = "N/A"
 
-        group_title = row["group-title"]
-        nome_filme = f"{tvg_name} ({release_year})"
-        
-        m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{nome_filme}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n\n'
-        file.write(m3u_line)
-        print(f"Escrevendo linha: {m3u_line.strip()}")
+            group_title = row["group-title"]
+            nome_filme = f"{tvg_name} ({release_year})"
+            
+            m3u_line = f'#EXTINF:-1 tvg-type="movie" tvg-name="{nome_filme}" tvg-logo="{logo}" description="{description}" group-title="{group_title}", {nome_filme}\n\n'
+            file.write(m3u_line)
+            print(f"Escrevendo linha: {m3u_line.strip()}")
+        else:
+            print(f"ID não encontrado para a linha: {row}")
 
 print("Lista M3U gerada com sucesso!")
 
