@@ -17,6 +17,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Full history for git stash
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -35,13 +37,27 @@ jobs:
       run: |
         python script.py
 
-    - name: Commit and push changes
+    - name: Set up Git
       run: |
         git config --global user.email "eduardo@ebonini.com.br"
         git config --global user.name "ebonini"
-        git pull origin main
-        git add -f playlist.m3u
-        git commit -m "Add generated playlist.m3u"
-        git push origin main
+
+    - name: Stash local changes
+      run: git stash
+
+    - name: Pull latest changes
+      run: git pull origin main
+
+    - name: Apply stashed changes
+      run: git stash pop
+
+    - name: Add changes
+      run: git add -f playlist.m3u
+
+    - name: Commit changes
+      run: git commit -m "Add generated playlist.m3u"
+
+    - name: Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: git push origin main
