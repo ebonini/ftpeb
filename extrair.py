@@ -29,7 +29,7 @@ def armazenar_em_txt(dados, arquivo_txt):
 
 def main():
     api_key = 'SUA_API_KEY_DO_TMDB'
-    nomes_filmes_series = extrair_nomes_m3u('sua_lista.m3u')
+    nomes_filmes_series = extrair_nomes_m3u('lista.m3u')
     ids_filmes_series = {}
 
     for nome em nomes_filmes_series:
