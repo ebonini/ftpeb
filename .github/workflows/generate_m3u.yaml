@@ -50,14 +50,18 @@ jobs:
     - name: Apply stashed changes
       run: git stash pop || echo "No stash entries to apply"
 
-    - name: Handle merge conflicts
+    - name: Handle merge conflicts if playlist.m3u exists
       run: |
-        git checkout --ours playlist.m3u
-        git add playlist.m3u
-        git commit -m "Resolve merge conflict by keeping our version of playlist.m3u" || echo "Nothing to commit"
+        if [ -f playlist.m3u ]; then
+          git checkout --ours playlist.m3u
+          git add playlist.m3u
+          git commit -m "Resolve merge conflict by keeping our version of playlist.m3u" || echo "Nothing to commit"
+        else
+          echo "playlist.m3u does not exist, skipping conflict resolution"
+        fi
 
     - name: Add changes
-      run: git add -f playlist.m3u
+      run: git add -f playlist.m3u || echo "playlist.m3u not found, skipping add"
 
     - name: Commit changes
       run: git commit -m "Add generated playlist.m3u" || echo "Nothing to commit"
