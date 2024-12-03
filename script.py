@@ -20,7 +20,10 @@ def get_movie_data(movie_id):
     url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={tmdb_api_key}&language=pt-BR"
     response = requests.get(url)
     if response.status_code == 200:
+        print(f"Dados do filme obtidos para ID {movie_id}")
         return response.json()  # Retorna os dados do filme
+    else:
+        print(f"Erro ao obter dados do filme para ID {movie_id}: Status {response.status_code}")
     return None
 
 # Verificar o diretório de trabalho atual
@@ -43,7 +46,7 @@ else:
 # Gerar a lista M3U
 m3u_file_path = os.path.join(current_directory, "playlist.m3u")
 print(f"Salvando o arquivo M3U em: {m3u_file_path}")
-with open(m3u_file_path, "w") as file:
+with open(m3u_file_path, "w", encoding='utf-8') as file:
     for row in rows:
         movie_id = row.get("ID")  # Usar o campo ID da planilha
         
