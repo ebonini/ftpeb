@@ -34,8 +34,7 @@ jobs:
       env:
         GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-      run: |
-        python script.py
+      run: python script.py
 
     - name: Set up Git
       run: |
@@ -49,13 +48,19 @@ jobs:
       run: git pull origin main
 
     - name: Apply stashed changes
-      run: git stash pop
+      run: git stash pop || echo "No stash entries to apply"
+
+    - name: Handle merge conflicts
+      run: |
+        git checkout --ours playlist.m3u
+        git add playlist.m3u
+        git commit -m "Resolve merge conflict by keeping our version of playlist.m3u" || echo "Nothing to commit"
 
     - name: Add changes
       run: git add -f playlist.m3u
 
     - name: Commit changes
-      run: git commit -m "Add generated playlist.m3u"
+      run: git commit -m "Add generated playlist.m3u" || echo "Nothing to commit"
 
     - name: Push changes
       env:
